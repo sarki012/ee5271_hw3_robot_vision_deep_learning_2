@@ -3,6 +3,10 @@
 # 3854563
 # 4/1/26
 
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
 from torch.utils.data import DataLoader, TensorDataset
 
 # Create datasets
