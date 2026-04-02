@@ -35,10 +35,10 @@ def train_model(model, train_loader, criterion, optimizer, scheduler, num_epochs
         scheduler.step() # Update learning rate
         test_loader = get_test_loader()
         # Evaluate on test set
-        test_acc = evaluate(model, test_loader)
+        test_acc = evaluate(model, test_loader, labels_onehot, device='cpu')
         print(f'Epoch {epoch+1}: Test Acc = {test_acc:.2f}%')
 
-def evaluate(model, test_loader, device='cpu'):       #
+def evaluate(model, test_loader, labels_onehot, device='cpu'):       #
     # 1. Set model to evaluation mode
     model.eval()
     correct = 0
