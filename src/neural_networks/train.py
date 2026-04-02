@@ -21,7 +21,11 @@ def train_model(model, train_loader, criterion, optimizer, scheduler, num_epochs
             optimizer.zero_grad()
             outputs = model(inputs)
     
-            labels_onehot = torch.zeros(labels.size(0), 10)    
+            labels_onehot = torch.zeros(labels.size(0), 10)  
+            labels_onehot.scatter_(1, labels, 1)   
+            # 3. Print the full matrix
+           # torch.set_printoptions(threshold=float('inf')) # Ensure no truncation
+          #  print(labels_onehot)     
             # 3. Calculate loss
             # Use the outputs from the current batch, not 'model.outputs'
             loss = criterion(outputs, labels_onehot)
@@ -41,15 +45,15 @@ def evaluate(model, test_loader, device='cpu'):       #
     total = 0
     # 2. Disable gradient calculation to save memory and speed up
     with torch.no_grad():
-        for data, targets in test_loader:
-            data, targets = data.to(device), targets.to(device) 
+        for data, labels_onehot in test_loader:
+            data, labels_onehot = data.to(device), labels_onehot.to(device) 
             # 3. Forward pass
             outputs = model(data)
             # 4. Get predictions (index of max log-probability)
             _, predicted = torch.max(outputs.data, 1) 
             # 5. Aggregate results
-            total += targets.size(0)
-            correct += (predicted == targets).sum().item()  
+            total += labels_onehot.size(0)
+            correct += (predicted == labels_onehot).sum().item()  
     # 6. Calculate final accuracy
     test_acc = 100 * correct / total
     return test_acc
