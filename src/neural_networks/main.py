@@ -29,7 +29,8 @@ def main():
     num_epochs = 30
     criterion = nn.MSELoss()
     train_loader = get_train_loader()
-
     train.train_model(model, train_loader, criterion, optimizer, scheduler, num_epochs)
 
+if __name__ == "__main__":
+    main()
 

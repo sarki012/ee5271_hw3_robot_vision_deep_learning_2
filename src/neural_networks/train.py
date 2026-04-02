@@ -36,13 +36,11 @@ def train_model(model, train_loader, criterion, optimizer, scheduler, num_epochs
         test_acc = evaluate(model, test_loader)
         print(f'Epoch {epoch+1}: Test Acc = {test_acc:.2f}%')
 
-def evaluate(model, test_loader, device='cuda'):
+def evaluate(model, test_loader, device='cpu'):       #
     # 1. Set model to evaluation mode
     model.eval()
-    
     correct = 0
     total = 0
-    
     # 2. Disable gradient calculation to save memory and speed up
     with torch.no_grad():
         for data, targets in test_loader:
