@@ -46,14 +46,23 @@ def evaluate(model, test_loader, labels_onehot, device='cpu'):       #
     # 2. Disable gradient calculation to save memory and speed up
     with torch.no_grad():
         for data, labels_onehot in test_loader:
+            data, labels_onehot = data.to(device), labels_onehot.to(device)
+            
+            outputs = model(data)
+            _, predicted = torch.max(outputs.data, 1)
+            
+            # FIX: Convert one-hot labels to class indices
+            labels = torch.argmax(labels_onehot, dim=1) 
+
+
             data, labels_onehot = data.to(device), labels_onehot.to(device) 
             # 3. Forward pass
             outputs = model(data)
             # 4. Get predictions (index of max log-probability)
             _, predicted = torch.max(outputs.data, 1) 
             # 5. Aggregate results
-            total += labels_onehot.size(0)
-            correct += (predicted == labels_onehot).sum().item()  
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()  
     # 6. Calculate final accuracy
     test_acc = 100 * correct / total
     return test_acc
