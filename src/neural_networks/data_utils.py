@@ -21,7 +21,7 @@ def get_train_loader():
     # 'file_path.mat' should be the path to your MATLAB file
     mat_data_train = scipy.io.loadmat('../../resource/hw3/data/mnist_train.mat')
     # Print the keys to see the variable names inside the .mat file
-    print(mat_data_train.keys())
+   # print(mat_data_train.keys())
     # Access specific variables (e.g., 'X' for images, 'y' for labels)
     # Note: Variable names depend on how the .mat file was saved
     images_train = mat_data_train['im_train']
@@ -31,16 +31,16 @@ def get_train_loader():
     X_train = X_train.t()
     y_train = torch.tensor(labels_train, dtype=torch.long) # Use torch.long for classification labels
     y_train = y_train.t()
-    print(X_train.size())
-    print(y_train.size())
+  #  print(X_train.size())
+   # print(y_train.size())
     # Now X_train and y_train are defined and can be used in TensorDataset
     train_dataset = TensorDataset(X_train, y_train)
     # You can also create a DataLoader to handle batching and shuffling
     train_loader = DataLoader(dataset=train_dataset, batch_size=32, shuffle=True)
     # 2. Extract the specific image (e.g., first column) and reshape
     # Check shape first: print(image_data.shape)
-    plt.imshow(images_train[:,130].reshape((14, 14), order='F'), cmap='gray')
-    plt.show()
+ #   plt.imshow(images_train[:,130].reshape((14, 14), order='F'), cmap='gray')
+  #  plt.show()
     return train_loader
 
 def get_test_loader():
@@ -51,11 +51,11 @@ def get_test_loader():
     X_test = X_test.t()
     y_test = torch.tensor(labels_test, dtype=torch.long)
     y_test = y_test.t()
-    print(X_test.size())
-    print(y_test.size())
+  #  print(X_test.size())
+  #  print(y_test.size())
     test_dataset = TensorDataset(X_test, y_test)
     # You can also create a DataLoader to handle batching and shuffling
     test_loader = DataLoader(dataset=test_dataset, batch_size=32, shuffle=True)
-    plt.imshow(images_test[:,120].reshape((14, 14), order='F'), cmap='gray')
-    plt.show()
+ #   plt.imshow(images_test[:,120].reshape((14, 14), order='F'), cmap='gray')
+ #   plt.show()
     return test_loader
