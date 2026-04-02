@@ -20,14 +20,12 @@ def train_model(model, train_loader, criterion, optimizer, scheduler, num_epochs
         for inputs, labels in train_loader:
             optimizer.zero_grad()
             outputs = model(inputs)
-            labels_onehot = torch.zeros(labels.size(0), 10)
-           # labels_onehot.scatter_(1, labels.unsqueeze(1), 1)
-            labels_onehot.scatter_(1, labels, 1)     
+    
+            labels_onehot = torch.zeros(labels.size(0), 10)    
             # 3. Calculate loss
             # Use the outputs from the current batch, not 'model.outputs'
             loss = criterion(outputs, labels_onehot)
             
-            #loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
         scheduler.step() # Update learning rate
@@ -44,18 +42,14 @@ def evaluate(model, test_loader, device='cpu'):       #
     # 2. Disable gradient calculation to save memory and speed up
     with torch.no_grad():
         for data, targets in test_loader:
-            data, targets = data.to(device), targets.to(device)
-            
+            data, targets = data.to(device), targets.to(device) 
             # 3. Forward pass
             outputs = model(data)
-            
             # 4. Get predictions (index of max log-probability)
-            _, predicted = torch.max(outputs.data, 1)
-            
+            _, predicted = torch.max(outputs.data, 1) 
             # 5. Aggregate results
             total += targets.size(0)
-            correct += (predicted == targets).sum().item()
-            
+            correct += (predicted == targets).sum().item()  
     # 6. Calculate final accuracy
     test_acc = 100 * correct / total
     return test_acc
