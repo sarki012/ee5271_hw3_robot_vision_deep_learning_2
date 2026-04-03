@@ -10,13 +10,3 @@ from torch.utils.data import DataLoader, TensorDataset
 import scipy.io
 import torch
 import numpy as np
-
-'''
-class SLPLinear(nn.Module):
-    def __init__(self, input_size=196, num_classes=10):
-        super(SLPLinear, self).__init__()
-        self.fc = nn.Linear(input_size, num_classes)
-      #  flattened_copy = self.flatten() 
-        def forward(self, x):
-            return self.fc(x)
-'''

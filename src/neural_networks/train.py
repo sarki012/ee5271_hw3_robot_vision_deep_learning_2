@@ -20,16 +20,11 @@ def train_model(model, train_loader, criterion, optimizer, scheduler, num_epochs
         for inputs, labels in train_loader:
             optimizer.zero_grad()
             outputs = model(inputs)
-    
             labels_onehot = torch.zeros(labels.size(0), 10)  
-            labels_onehot.scatter_(1, labels.unsqueeze(1), 1)   
-            # 3. Print the full matrix
-           # torch.set_printoptions(threshold=float('inf')) # Ensure no truncation
-          #  print(labels_onehot)     
+            labels_onehot.scatter_(1, labels.unsqueeze(1), 1)       
             # 3. Calculate loss
             # Use the outputs from the current batch, not 'model.outputs'
             loss = criterion(outputs, labels_onehot)
-            
             loss.backward()
             optimizer.step()
         scheduler.step() # Update learning rate
