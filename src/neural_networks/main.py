@@ -19,7 +19,7 @@ from data_utils import get_train_loader
 import train
 
 def main():
-    '''
+    
     # Instantiate the class
     model = SLPLinear(input_size=196, num_classes=10)
     optimizer = optim.SGD(model.parameters(), lr=0.05)
@@ -43,7 +43,7 @@ def main():
     criterion = nn.CrossEntropyLoss()
     train_loader = get_train_loader()
     train.train_model(model, train_loader, criterion, optimizer, scheduler, num_epochs)
-
+'''
 if __name__ == "__main__":
     main()
 
