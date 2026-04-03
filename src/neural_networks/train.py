@@ -15,6 +15,9 @@ import matplotlib.pyplot as plt
 from data_utils import get_test_loader
 
 def train_model(model, train_loader, criterion, optimizer, scheduler, num_epochs):
+    test_acc = np.zeros((num_epochs), dtype=float)
+    # 1. Initialize an empty list to store accuracies
+    test_acc_history = [] 
     for epoch in range(num_epochs):
         model.train()
         for inputs, labels in train_loader:
@@ -32,8 +35,29 @@ def train_model(model, train_loader, criterion, optimizer, scheduler, num_epochs
         test_loader = get_test_loader()
         # Evaluate on test set
         test_acc = evaluate(model, test_loader, labels_onehot, device='cpu')
+        test_acc_history.append(test_acc) # Store accuracy
         print(f'Epoch {epoch+1}: Test Acc = {test_acc:.2f}%')
 
+    # 2. Plot after the loop finishes
+    plt.figure()
+    plt.plot(range(1, num_epochs + 1), test_acc_history, label='Test Accuracy')
+    plt.xlabel('Epochs')
+    plt.ylabel('Accuracy')
+    plt.title('Test Accuracy over Epochs')
+    plt.legend()
+    plt.show() # Renders the plot
+
+'''
+    for i in range(num_epochs):
+        # 2. Create the plot
+        plt.plot(i, test_acc[i])
+    # 3. Add labels and title (optional but recommended)
+    plt.xlabel('Epoch')
+    plt.ylabel('Test Accuracy')
+    plt.title('Loss Curve')
+    # 4. Display the plot
+    plt.show()
+'''
 def evaluate(model, test_loader, labels_onehot, device='cpu'):       #
     # 1. Set model to evaluation mode
     model.eval()
