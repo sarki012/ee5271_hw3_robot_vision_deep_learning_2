@@ -36,6 +36,9 @@ def get_train_loader():
     # If y_test is (N, 1) or (1, N), reshape it to a flat vector (N,)
     y_train = y_train.squeeze()                
 
+    # Scale pixel values from [0, 255] to [0.0, 1.0]
+    X_train = X_train / 255.0
+
     train_dataset = TensorDataset(X_train, y_train)                
     train_loader = DataLoader(dataset=train_dataset, batch_size=32, shuffle=True)
     return train_loader
@@ -55,7 +58,11 @@ def get_test_loader():
     X_test = torch.tensor(images_test, dtype=torch.float32).t()
     y_test = torch.tensor(labels_test, dtype=torch.long).t()
     # If y_test is (N, 1) or (1, N), reshape it to a flat vector (N,)
-    y_test = y_test.squeeze()                
+    y_test = y_test.squeeze() 
+
+    # Scale pixel values from [0, 255] to [0.0, 1.0]
+    X_test = X_test / 255.0
+
     test_dataset = TensorDataset(X_test, y_test)                
     test_loader = DataLoader(dataset=test_dataset, batch_size=32, shuffle=True)             
     return test_loader
