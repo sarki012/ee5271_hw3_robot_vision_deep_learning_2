@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 from data_utils import get_test_loader
 
 def train_model(model, train_loader, criterion, optimizer, scheduler, num_epochs):
+    SLPLinear_path = "../../results/checkpoints/slp_linear.pth"
     test_acc = np.zeros((num_epochs), dtype=float)
     # 1. Initialize an empty list to store accuracies
     test_acc_history = [] 
@@ -37,6 +38,14 @@ def train_model(model, train_loader, criterion, optimizer, scheduler, num_epochs
         test_acc = evaluate(model, test_loader, labels_onehot, device='cpu')
         test_acc_history.append(test_acc) # Store accuracy
         print(f'Epoch {epoch+1}: Test Acc = {test_acc:.2f}%')
+
+        # Save checkpoint
+        torch.save({
+            'epoch': epoch,
+            'model_state_dict': model.state_dict(),
+            'optimizer_state_dict': optimizer.state_dict(),
+            'loss': loss,
+        }, SLPLinear_path)
 
     # 2. Plot after the loop finishes
     plt.figure()
