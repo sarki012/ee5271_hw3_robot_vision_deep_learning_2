@@ -19,9 +19,10 @@ def train_model(model, train_loader, criterion, optimizer, scheduler, num_epochs
         model.train()
         for inputs, labels in train_loader:
             optimizer.zero_grad()
-            outputs = model(inputs)
+            outputs = model(inputs.float())
             labels_onehot = torch.zeros(labels.size(0), 10)  
-            labels_onehot.scatter_(1, labels.unsqueeze(1), 1)       
+            labels_onehot.scatter_(1, labels.unsqueeze(1), 1)
+            labels_onehot = labels_onehot.float()      
             # 3. Calculate loss
             # Use the outputs from the current batch, not 'model.outputs'
             loss = criterion(outputs, labels_onehot)
@@ -43,7 +44,7 @@ def evaluate(model, test_loader, labels_onehot, device='cpu'):       #
         for data, labels_onehot in test_loader:
             data, labels_onehot = data.to(device), labels_onehot.to(device) 
             # 3. Forward pass
-            outputs = model(data)
+            outputs = model(data.float())
             # 4. Get predictions (index of max log-probability)
             _, predicted = torch.max(outputs.data, 1) 
             # 5. Aggregate results
