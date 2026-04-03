@@ -14,6 +14,8 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 from data_utils import get_test_loader
 
+
+'''
 def train_model(model, train_loader, criterion, optimizer, scheduler, num_epochs):
     SLPLinear_path = "../../results/checkpoints/slp_linear.pth"
     test_acc = np.zeros((num_epochs), dtype=float)
@@ -46,6 +48,37 @@ def train_model(model, train_loader, criterion, optimizer, scheduler, num_epochs
             'optimizer_state_dict': optimizer.state_dict(),
             'loss': loss,
         }, SLPLinear_path)
+'''
+
+def train_model(model, train_loader, criterion, optimizer, scheduler, num_epochs):
+    MLP_path = "../../results/checkpoints/mlp.pth"
+    test_acc = np.zeros((num_epochs), dtype=float)
+    # 1. Initialize an empty list to store accuracies
+    test_acc_history = [] 
+    for epoch in range(num_epochs):
+        model.train()
+        for inputs, labels in train_loader:
+            optimizer.zero_grad()
+            outputs = model(inputs.float())     
+            # 3. Calculate loss
+            # Use the outputs from the current batch, not 'model.outputs'
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+        scheduler.step() # Update learning rate
+        test_loader = get_test_loader()
+        # Evaluate on test set
+        test_acc = evaluate(model, test_loader, labels, device='cpu')
+        test_acc_history.append(test_acc) # Store accuracy
+        print(f'Epoch {epoch+1}: Test Acc = {test_acc:.2f}%')
+
+        # Save checkpoint
+        torch.save({
+            'epoch': epoch,
+            'model_state_dict': model.state_dict(),
+            'optimizer_state_dict': optimizer.state_dict(),
+            'loss': loss,
+        }, MLP_path)
 
     # 2. Plot after the loop finishes
     plt.figure()
