@@ -21,11 +21,11 @@ import train
 def main():
     # Instantiate the class
     model = SLPLinear(input_size=196, num_classes=10)
-    optimizer = optim.SGD(model.parameters(), lr=0.9)
+    optimizer = optim.SGD(model.parameters(), lr=0.05)
     # 2. Define the StepLR scheduler
     # step_size: how many epochs to wait before reducing the LR (10)
     # gamma: the multiplier for the LR (0.9)
-    scheduler = StepLR(optimizer, step_size=10, gamma=0.9)
+    scheduler = StepLR(optimizer, step_size=10, gamma=0.1)
     num_epochs = 30
     criterion = nn.MSELoss()
     train_loader = get_train_loader()
