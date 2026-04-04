@@ -23,7 +23,7 @@ def main():
     # Instantiate the class
     model = SLPLinear(input_size=196, num_classes=10)
     optimizer = optim.SGD(model.parameters(), lr=0.05)
-    # 2. Define the StepLR scheduler
+    # Define the StepLR scheduler
     # step_size: how many epochs to wait before reducing the LR (10)
     # gamma: the multiplier for the LR (0.9)
     scheduler = StepLR(optimizer, step_size=10, gamma=0.9)
@@ -35,9 +35,9 @@ def main():
     # Instantiate the class
     model = SLP(input_size=196, num_classes=10)
     optimizer = optim.SGD(model.parameters(), lr=0.1)
-    # 2. Define the StepLR scheduler
+    # Define the StepLR scheduler
     # step_size: how many epochs to wait before reducing the LR (10)
-    # gamma: the multiplier for the LR (0.9)
+    # gamma: the multiplier for the LR (0.95)
     scheduler = StepLR(optimizer, step_size=10, gamma=0.95)
     num_epochs = 30
     criterion = nn.CrossEntropyLoss()
@@ -47,9 +47,9 @@ def main():
     # Instantiate the class
     model = MLP(input_size=196, num_classes=10)
     optimizer = optim.SGD(model.parameters(), lr=0.1, momentum=0.9)
-    # 2. Define the StepLR scheduler
+    # Define the StepLR scheduler
     # step_size: how many epochs to wait before reducing the LR (10)
-    # gamma: the multiplier for the LR (0.9)
+    # gamma: the multiplier for the LR (0.95)
     scheduler = StepLR(optimizer, step_size=10, gamma=0.95)
     num_epochs = 30
     criterion = nn.CrossEntropyLoss()
@@ -57,12 +57,11 @@ def main():
     train.train_modelMLP(model, train_loader, criterion, optimizer, scheduler, num_epochs)
 
     # Instantiate the class
- #   model = CNN(input_size=196, num_classes=10)
     model = CNN(num_classes=10)
     optimizer = optim.SGD(model.parameters(), lr=0.05, momentum=0.9)
-    # 2. Define the StepLR scheduler
+    # Define the StepLR scheduler
     # step_size: how many epochs to wait before reducing the LR (10)
-    # gamma: the multiplier for the LR (0.9)
+    # gamma: the multiplier for the LR (0.95)
     scheduler = StepLR(optimizer, step_size=10, gamma=0.95)
     num_epochs = 30
     criterion = nn.CrossEntropyLoss()

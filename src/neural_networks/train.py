@@ -17,35 +17,32 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import ConfusionMatrixDisplay
 
 # evaluate is common to all models
-def evaluate(model, test_loader, labels_onehot, device='cpu'):       #
-    # 1. Set model to evaluation mode
+def evaluate(model, test_loader, labels_onehot, device='cpu'):       
     all_preds = []
     all_labels = []
-
-    model.eval()
+    model.eval()    # Set model to evaluation mode
     correct = 0
     total = 0
     
-    # 2. Disable gradient calculation to save memory and speed up
+    # Disable gradient calculation to save memory and speed up
     with torch.no_grad():
         for data, labels_onehot in test_loader:
             data, labels_onehot = data.to(device), labels_onehot.to(device) 
-            # 3. Forward pass
-            outputs = model(data.float())
-            # 4. Get predictions (index of max log-probability)
-            _, predicted = torch.max(outputs.data, 1) 
-            # 5. Aggregate results
+            outputs = model(data.float()) # Forward pass
+            _, predicted = torch.max(outputs.data, 1)  # Get predictions (index of max log-probability)
+          
             total += labels_onehot.size(0)
-            correct += (predicted == labels_onehot).sum().item()  
+            # Creates a boolean tensor, returning 1 if the predicted was right and 0 otherwise
+            correct += (predicted == labels_onehot).sum().item()
 
+            # Predictions and labels used for the confusion matrix
             all_preds.extend(predicted.cpu().numpy())
             all_labels.extend(labels_onehot.cpu().numpy())
-    # 6. Calculate final accuracy
+    # Calculate final accuracy
     test_acc = 100 * correct / total
-
-    # This will result in a 10x10 numpy array
     global count
     count += 1
+    # Only generate the confusion matrix for each model when count == num_epochs (30)
     if count == 30:
         cm = confusion_matrix(all_labels, all_preds)
         print(cm)
@@ -60,30 +57,32 @@ def evaluate(model, test_loader, labels_onehot, device='cpu'):       #
 def train_model_SLPLinear(model, train_loader, criterion, optimizer, scheduler, num_epochs):
     SLPLinear_path = "../../results/checkpoints/slp_linear.pth"
     test_acc = np.zeros((num_epochs), dtype=float)
-    # 1. Initialize an empty list to store accuracies
-    test_acc_history = []
-    loss_history = [] 
-    global count
+    test_acc_history = []       # Initialize an empty list to store accuracies
+    loss_history = []       # List to store loss
+    global count        # Once count hits num_epochs for each model, then the confusion matrices are outputted 
     count = 0
     for epoch in range(num_epochs):
         model.train()
         for inputs, labels in train_loader:
-            optimizer.zero_grad()
-            outputs = model(inputs.float())
+            optimizer.zero_grad()       # Clear gradients before starting a new backwards pass
+            outputs = model(inputs.float())     # Triggers models forward function 
+
+            # Convert labels to onehot encoding for mean-squared error loss
             labels_onehot = torch.zeros(labels.size(0), 10)  
             labels_onehot.scatter_(1, labels.unsqueeze(1), 1)
-            labels_onehot = labels_onehot.float()      
+            labels_onehot = labels_onehot.float()
+
             # 3. Calculate loss
             # Use the outputs from the current batch, not 'model.outputs'
             loss = criterion(outputs, labels_onehot)
-            loss.backward()
-            optimizer.step()
+            loss.backward()     # Backpropagation
+            optimizer.step()    # Update the weights and biases
         scheduler.step() # Update learning rate
-        test_loader = get_test_loader()
+        test_loader = get_test_loader()     # Retrieve test data
         # Evaluate on test set
         test_acc = evaluate(model, test_loader, labels_onehot, device='cpu')
         test_acc_history.append(test_acc) # Store accuracy
-        loss_history.append(loss.item())
+        loss_history.append(loss.item())    # Store loss
         print(f'Epoch {epoch+1}: Test Acc = {test_acc:.2f}%')
 
         # Save checkpoint
@@ -94,7 +93,7 @@ def train_model_SLPLinear(model, train_loader, criterion, optimizer, scheduler, 
             'loss': loss,
         }, SLPLinear_path)
 
-    # 2. Plot after the loop finishes
+    # Plot after the loop finishes
     plt.figure()
     plt.plot(range(1, num_epochs + 1), loss_history, label='Training Loss vs. Epoch')
     plt.xlabel('Epochs')
@@ -113,25 +112,24 @@ def train_model_SLPLinear(model, train_loader, criterion, optimizer, scheduler, 
 def train_modelSLP(model, train_loader, criterion, optimizer, scheduler, num_epochs):
     SLP_path = "../../results/checkpoints/slp.pth"
     test_acc = np.zeros((num_epochs), dtype=float)
-    # 1. Initialize an empty list to store accuracies
-    test_acc_history = [] 
-    loss_history = []
+    test_acc_history = []   # Initialize an empty list to store accuracies
+    loss_history = []       # List to store loss
     for epoch in range(num_epochs):
         model.train()
         for inputs, labels in train_loader:
-            optimizer.zero_grad()
-            outputs = model(inputs.float())     
-            # 3. Calculate loss
+            optimizer.zero_grad()       # Clear gradients before starting a new backwards pass
+            outputs = model(inputs.float())     # Triggers model's forward function      
+            # Calculate loss
             # Use the outputs from the current batch, not 'model.outputs'
             loss = criterion(outputs, labels)
-            loss.backward()
-            optimizer.step()
-        scheduler.step() # Update learning rate
-        test_loader = get_test_loader()
+            loss.backward()         # Backpropagation
+            optimizer.step()        # Update the weights and biases
+        scheduler.step()            # Update learning rate
+        test_loader = get_test_loader()     # Retrieve test data
         # Evaluate on test set
         test_acc = evaluate(model, test_loader, labels, device='cpu')
-        test_acc_history.append(test_acc) # Store accuracy
-        loss_history.append(loss.item())
+        test_acc_history.append(test_acc) # Store accuracy for accuracy curve
+        loss_history.append(loss.item())    # Store loss for loss curve
         print(f'Epoch {epoch+1}: Test Acc = {test_acc:.2f}%')
 
         # Save checkpoint
@@ -142,7 +140,7 @@ def train_modelSLP(model, train_loader, criterion, optimizer, scheduler, num_epo
             'loss': loss,
         }, SLP_path)
 
-    # 2. Plot after the loop finishes
+    # Plot after the loop finishes
     plt.figure()
     plt.plot(range(1, num_epochs + 1), loss_history, label='Training Loss vs. Epoch')
     plt.xlabel('Epochs')
@@ -161,20 +159,19 @@ def train_modelSLP(model, train_loader, criterion, optimizer, scheduler, num_epo
 def train_modelMLP(model, train_loader, criterion, optimizer, scheduler, num_epochs):
     MLP_path = "../../results/checkpoints/mlp.pth"
     test_acc = np.zeros((num_epochs), dtype=float)
-    # 1. Initialize an empty list to store accuracies
-    test_acc_history = [] 
-    loss_history = []
+    test_acc_history = []       # Initialize an empty list to store accuracies
+    loss_history = []           # List to store the loss
     for epoch in range(num_epochs):
         model.train()
         for inputs, labels in train_loader:
-            optimizer.zero_grad()
-            outputs = model(inputs.float())     
-            # 3. Calculate loss
+            optimizer.zero_grad()       # Clear gradients before starting a new backwards pass
+            outputs = model(inputs.float())     # Triggers models forward function 
+            # Calculate loss
             # Use the outputs from the current batch, not 'model.outputs'
             loss = criterion(outputs, labels)
-            loss.backward()
-            optimizer.step()
-        scheduler.step() # Update learning rate
+            loss.backward()     # Backpropagation
+            optimizer.step()    # Update the weights and biases
+        scheduler.step()        # Update learning rate
         test_loader = get_test_loader()
         # Evaluate on test set
         test_acc = evaluate(model, test_loader, labels, device='cpu')
@@ -190,7 +187,7 @@ def train_modelMLP(model, train_loader, criterion, optimizer, scheduler, num_epo
             'loss': loss,
         }, MLP_path)
 
-    # 2. Plot after the loop finishes
+    # Plot after the loop finishes
     plt.figure()
     plt.plot(range(1, num_epochs + 1), loss_history, label='Training Loss vs. Epoch')
     plt.xlabel('Epochs')
@@ -209,20 +206,19 @@ def train_modelMLP(model, train_loader, criterion, optimizer, scheduler, num_epo
 def train_modelCNN(model, train_loader, criterion, optimizer, scheduler, num_epochs):
     CNN_path = "../../results/checkpoints/cnn.pth"
     test_acc = np.zeros((num_epochs), dtype=float)
-    # 1. Initialize an empty list to store accuracies
-    test_acc_history = [] 
-    loss_history = []
+    test_acc_history = []       # Initialize an empty list to store accuracies
+    loss_history = []           # List to store the loss
     for epoch in range(num_epochs):
         model.train()
         for inputs, labels in train_loader:
-            optimizer.zero_grad()
-            outputs = model(inputs.float())     
-            # 3. Calculate loss
+            optimizer.zero_grad()       # Clear gradients before starting a new backwards pass      
+            outputs = model(inputs.float())         # Triggers model's forward function    
+            # Calculate loss
             # Use the outputs from the current batch, not 'model.outputs'
             loss = criterion(outputs, labels)
-            loss.backward()
-            optimizer.step()
-        scheduler.step() # Update learning rate
+            loss.backward()     # Backpropagation
+            optimizer.step()    # Update the weights and biases
+        scheduler.step()        # Update learning rate
         test_loader = get_test_loader()
         # Evaluate on test set
         test_acc = evaluate(model, test_loader, labels, device='cpu')

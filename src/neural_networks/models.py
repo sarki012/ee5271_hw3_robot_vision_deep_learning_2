@@ -13,6 +13,7 @@ import numpy as np
 from pathlib import Path
 import matplotlib.pyplot as plt
 
+# Single-Layer Linear Perceptron 
 class SLPLinear(nn.Module):
     def __init__(self, input_size=196, num_classes=10):
         super(SLPLinear, self).__init__()
@@ -20,6 +21,7 @@ class SLPLinear(nn.Module):
     def forward(self, x):
         return self.fc(x)
     
+# Single-Layer Perceptron with Softmax
 class SLP(nn.Module):
     def __init__(self, input_size=196, num_classes=10):
         super(SLP, self).__init__()
@@ -27,6 +29,7 @@ class SLP(nn.Module):
     def forward(self, x):
         return self.fc(x)
 
+# Multi-Layer Perceptron
 class MLP(nn.Module):
     def __init__(self, input_size=196, hidden_size=30,num_classes=10):
         super(MLP, self).__init__()
@@ -39,6 +42,7 @@ class MLP(nn.Module):
         x = self.fc2(x)
         return x
     
+# Convolutional Neural Network with ReLU and MaxPool
 class CNN(nn.Module):
     def __init__(self, num_classes=10):
         super(CNN, self).__init__()
