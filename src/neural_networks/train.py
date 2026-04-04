@@ -111,7 +111,7 @@ def train_model_SLPLinear(model, train_loader, criterion, optimizer, scheduler, 
     plt.show() # Renders the plot
 
 def train_modelSLP(model, train_loader, criterion, optimizer, scheduler, num_epochs):
-    SLP_path = "../../results/checkpoints/mlp.pth"
+    SLP_path = "../../results/checkpoints/slp.pth"
     test_acc = np.zeros((num_epochs), dtype=float)
     # 1. Initialize an empty list to store accuracies
     test_acc_history = [] 
