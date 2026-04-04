@@ -20,6 +20,13 @@ class SLPLinear(nn.Module):
     def forward(self, x):
         return self.fc(x)
     
+class SLP(nn.Module):
+    def __init__(self, input_size=196, num_classes=10):
+        super(SLP, self).__init__()
+        self.fc = nn.Linear(input_size, num_classes)
+    def forward(self, x):
+        return self.fc(x)
+
 class MLP(nn.Module):
     def __init__(self, input_size=196, hidden_size=30,num_classes=10):
         super(MLP, self).__init__()
