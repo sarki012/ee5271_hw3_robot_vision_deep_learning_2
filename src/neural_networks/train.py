@@ -17,7 +17,7 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import ConfusionMatrixDisplay
 
 
-def train_model(model, train_loader, criterion, optimizer, scheduler, num_epochs):
+def train_model_SLPLinear(model, train_loader, criterion, optimizer, scheduler, num_epochs):
     SLPLinear_path = "../../results/checkpoints/slp_linear.pth"
     test_acc = np.zeros((num_epochs), dtype=float)
     # 1. Initialize an empty list to store accuracies
@@ -70,9 +70,7 @@ def train_model(model, train_loader, criterion, optimizer, scheduler, num_epochs
     plt.legend()
     plt.show() # Renders the plot
 
-'''
-
-def train_model(model, train_loader, criterion, optimizer, scheduler, num_epochs):
+def train_modelMLP(model, train_loader, criterion, optimizer, scheduler, num_epochs):
     MLP_path = "../../results/checkpoints/mlp.pth"
     test_acc = np.zeros((num_epochs), dtype=float)
     # 1. Initialize an empty list to store accuracies
@@ -103,20 +101,23 @@ def train_model(model, train_loader, criterion, optimizer, scheduler, num_epochs
             'optimizer_state_dict': optimizer.state_dict(),
             'loss': loss,
         }, MLP_path)
-'''
 
+    # 2. Plot after the loop finishes
+    plt.figure()
+    plt.plot(range(1, num_epochs + 1), loss_history, label='Training Loss vs. Epoch')
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
+    plt.title('Training Loss vs. Epochs')
+    plt.legend()
+    plt.show() # Renders the plot
 
-'''
-    for i in range(num_epochs):
-        # 2. Create the plot
-        plt.plot(i, test_acc[i])
-    # 3. Add labels and title (optional but recommended)
-    plt.xlabel('Epoch')
-    plt.ylabel('Test Accuracy')
-    plt.title('Loss Curve')
-    # 4. Display the plot
-    plt.show()
-'''
+    plt.plot(range(1, num_epochs + 1), test_acc_history, label='Test Accuracy')
+    plt.xlabel('Epochs')
+    plt.ylabel('Accuracy')
+    plt.title('Test Accuracy vs. Epochs')
+    plt.legend()
+    plt.show() # Renders the plot
+
 def evaluate(model, test_loader, labels_onehot, device='cpu'):       #
     # 1. Set model to evaluation mode
     all_preds = []

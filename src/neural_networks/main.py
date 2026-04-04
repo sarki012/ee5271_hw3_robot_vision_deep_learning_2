@@ -30,8 +30,8 @@ def main():
     num_epochs = 30
     criterion = nn.MSELoss()
     train_loader = get_train_loader()
-    train.train_model(model, train_loader, criterion, optimizer, scheduler, num_epochs)
-'''
+    train.train_model_SLPLinear(model, train_loader, criterion, optimizer, scheduler, num_epochs)
+
     # Instantiate the class
     model = MLP(input_size=196, num_classes=10)
     optimizer = optim.SGD(model.parameters(), lr=0.1, momentum=0.9)
@@ -42,8 +42,8 @@ def main():
     num_epochs = 30
     criterion = nn.CrossEntropyLoss()
     train_loader = get_train_loader()
-    train.train_model(model, train_loader, criterion, optimizer, scheduler, num_epochs)
-'''
+    train.train_modelMLP(model, train_loader, criterion, optimizer, scheduler, num_epochs)
+
 if __name__ == "__main__":
     main()
 
