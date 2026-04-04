@@ -13,7 +13,8 @@ import numpy as np
 from pathlib import Path
 import matplotlib.pyplot as plt
 from data_utils import get_test_loader
-
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import ConfusionMatrixDisplay
 
 
 def train_model(model, train_loader, criterion, optimizer, scheduler, num_epochs):
@@ -22,6 +23,8 @@ def train_model(model, train_loader, criterion, optimizer, scheduler, num_epochs
     # 1. Initialize an empty list to store accuracies
     test_acc_history = []
     loss_history = [] 
+    global count
+    count = 0
     for epoch in range(num_epochs):
         model.train()
         for inputs, labels in train_loader:
@@ -63,7 +66,7 @@ def train_model(model, train_loader, criterion, optimizer, scheduler, num_epochs
     plt.plot(range(1, num_epochs + 1), test_acc_history, label='Test Accuracy')
     plt.xlabel('Epochs')
     plt.ylabel('Accuracy')
-    plt.title('Test Accuracy and Training Loss over Epochs')
+    plt.title('Test Accuracy vs. Epochs')
     plt.legend()
     plt.show() # Renders the plot
 
@@ -116,9 +119,13 @@ def train_model(model, train_loader, criterion, optimizer, scheduler, num_epochs
 '''
 def evaluate(model, test_loader, labels_onehot, device='cpu'):       #
     # 1. Set model to evaluation mode
+    all_preds = []
+    all_labels = []
+
     model.eval()
     correct = 0
     total = 0
+    
     # 2. Disable gradient calculation to save memory and speed up
     with torch.no_grad():
         for data, labels_onehot in test_loader:
@@ -130,6 +137,20 @@ def evaluate(model, test_loader, labels_onehot, device='cpu'):       #
             # 5. Aggregate results
             total += labels_onehot.size(0)
             correct += (predicted == labels_onehot).sum().item()  
+
+            all_preds.extend(predicted.cpu().numpy())
+            all_labels.extend(labels_onehot.cpu().numpy())
     # 6. Calculate final accuracy
     test_acc = 100 * correct / total
+    # This will result in a 10x10 numpy array
+    global count
+    count += 1
+    if count == 30:
+        cm = confusion_matrix(all_labels, all_preds)
+        print(cm)
+        disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=range(10))
+        disp.plot(cmap=plt.cm.Blues)
+        plt.title("MNIST Confusion Matrix")
+        plt.show()
+        count = 0
     return test_acc
