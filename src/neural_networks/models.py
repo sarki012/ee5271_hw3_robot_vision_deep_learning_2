@@ -39,5 +39,28 @@ class MLP(nn.Module):
         x = self.fc2(x)
         return x
     
-    
-    
+class CNN(nn.Module):
+    def __init__(self, num_classes=10):
+        super(CNN, self).__init__()
+        self.conv1 = nn.Conv2d(in_channels=1,
+        out_channels=3,
+        kernel_size=3,
+        stride=1,
+        padding=1)
+        self.relu = nn.ReLU()
+        self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
+        self.fc = nn.Linear(3 * 7 * 7, num_classes)
+    def forward(self, x):
+        # Reshape to (batch, 1, 14, 14)
+        if len(x.shape) == 2:
+            x = x.view(-1, 1, 14, 14)
+        x = self.conv1(x) #-> (batch, 3, 14, 14)
+        x = self.relu(x)
+        x = self.pool(x) #-> (batch, 3, 7, 7)
+        x = x.view(x.size(0),-1) #-> (batch, 147)
+        x = self.fc(x)
+        #-> (batch, 10)
+        return x
+        
+        
+        
